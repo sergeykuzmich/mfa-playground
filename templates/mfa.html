@@ -1,0 +1,53 @@
+{% extends "_.html" %}
+
+{% block content %}
+<div class="sm:mx-auto -mt-64 relative sm:w-full sm:max-w-sm p-12 bg-white shadow-xl rounded-lg">
+    <img class="mx-auto h-10 w-auto"
+         src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=teal&shade=600"
+         alt="Your Company">
+
+    <div class="mt-10">
+        <form class="mt-2 space-y-6" method="POST">
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="password" value="{{ password }}">
+            <input type="hidden" name="email_mfa" value="{{ email_mfa }}">
+            <label for="otp_code"
+                   class="block mb-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">{{
+                challenge|safe }}</label>
+            <div>
+                <div class="mt-2">
+                    <input type="text" name="otp_code" id="otp_code" required
+                           placeholder="Code"
+                           class="block w-full rounded-md bg-white text-center px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-teal-600 sm:text-sm/6">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit"
+                        class="flex w-full justify-center rounded-md bg-teal-600 px-3 py-1.5 text-sm/6 font-semibold text-white hover:shadow-md shadow hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600  duration-150">
+                    Sign in
+                </button>
+            </div>
+
+            {% if error %}
+            <div class="text-red-700 -mt-3 text-center rounded relative text-sm"
+                 role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+        </form>
+        {% if has_email_mfa and not email_mfa %}
+        <form method="POST" class="mt-5 text-center">
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="password" value="{{ password }}">
+            <input type="hidden" name="email_mfa" value="{{ not email_mfa }}">
+
+            <button type="submit"
+                    class="inline text-sm/6 cursor-pointer font-semibold text-teal-600 hover:text-teal-500 duration-150">
+                Use email instead
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

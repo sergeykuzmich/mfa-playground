@@ -1,0 +1,105 @@
+{% extends "_.html" %}
+
+{% block content %}
+<section class="relative mx-auto max-w-5xl py-16 bg-gray-200">
+    <div class="container mx-auto px-4">
+        <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+            <div class="px-6">
+                <div class="flex flex-wrap justify-center">
+                    <div class="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
+                        <div class="relative">
+                            <img alt="Avatar"
+                                 src="https://www.gravatar.com/avatar/{{ gravatar_query }}"
+                                 class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[150px]">
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
+                        <div class="py-6 px-3 mt-32 sm:mt-0">
+                            <form method="post" action="/signout">
+                                <button class="bg-teal-600 hover:bg-teal-700 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
+                                        type="submit">
+                                    Sign out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-4/12 px-4 lg:order-1"></div>
+                </div>
+                <div class="text-center mt-12">
+                    <h3 class="text-4xl font-semibold leading-normal mb-2 text-gray-700 mb-2">
+                        {{user.name}}
+                    </h3>
+                    <div class="text-sm leading-normal mt-0 mb-2 text-gray-400 font-bold uppercase flex-row items-center">
+                        {{user.email}}
+                    </div>
+                </div>
+                <div class="mt-10 py-10 border-t border-gray-200">
+                    <div class="flex flex-wrap justify-center">
+                        <h4 class="text-2xl font-semibold leading-normal mb-2 text-gray-700 mb-2">
+                            Setup MFA
+                        </h4>
+                    </div>
+                    <ul class="max-w-sm mt-8 mx-auto divide-y divide-gray-200">
+                        <li class="pb-3">
+                            <div class="flex items-center space-x-4">
+                                <div class="shrink-0">
+                                    <div class="bg-teal-600 block p-1 rounded-full size-10 flex items-center justify-center">
+                                        <i class="fa-solid fa-mobile-screen text-white text-2xl"></i></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium truncate">
+                                        Authenticator
+                                    </p>
+                                    {% if user.authenticator_mfa_enabled %}
+                                    <p class="text-sm text-teal-600 truncate">
+                                        Enabled
+                                    </p>
+                                    {% else %}
+                                    <p class="text-sm text-gray-500 truncate">
+                                        Not connected
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                {% if not user.authenticator_mfa_enabled %}
+                                <a href="/mfa/totp/activate"
+                                   class="inline-flex items-center text-base font-semibold text-teal-700">
+                                    Setup
+                                </a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        <li class="py-3 sm:py-4">
+                            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                                <div class="shrink-0">
+                                    <div class="bg-teal-600 block p-1 rounded-full size-10 flex items-center justify-center">
+                                        <i class="fa-solid fa-envelope text-white text-2xl"></i></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        Email
+                                    </p>
+                                    {% if user.email_mfa_enabled %}
+                                    <p class="text-sm text-teal-600 truncate">
+                                        Enabled
+                                    </p>
+                                    {% else %}
+                                    <p class="text-sm text-gray-500 truncate">
+                                        Not connected
+                                    </p>
+                                    {% endif %}
+                                </div>
+                                {% if not user.email_mfa_enabled %}
+                                <a href="/mfa/eotp/activate"
+                                   class="inline-flex items-center text-base font-semibold text-teal-700">
+                                    Setup
+                                </a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

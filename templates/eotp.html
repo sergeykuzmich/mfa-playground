@@ -1,0 +1,42 @@
+{% extends "_.html" %}
+
+{% block content %}
+<section class="sm:mx-auto -mt-64 relative sm:w-full sm:max-w-sm p-12 bg-white shadow-xl rounded-lg">
+    <!-- QR Code image (replace with your actual QR code) -->
+
+    <!-- OTP Form -->
+    <form class="mt-6 space-y-6" method="POST">
+        <div>
+            <label for="otp" class="block text-sm/6 text-center font-medium text-gray-900">
+                Enter the code we sent you to account's email to&nbsp;activate MFA.
+            </label>
+            <div class="mt-2">
+                <input
+                        type="text"
+                        name="otp_code"
+                        id="otp"
+                        required
+                        placeholder="Code"
+                        class="block text-center w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-teal-600 sm:text-sm/6"
+                />
+            </div>
+        </div>
+
+        <div>
+            <button
+                    type="submit"
+                    class="duration-150 flex w-full justify-center rounded-md bg-teal-600 px-3 py-1.5 text-sm/6 font-semibold text-white hover:shadow-md shadow hover:bg-teal-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+            >
+                Activate
+            </button>
+        </div>
+
+        <!-- Example error message (optional) -->
+        {% if error %}
+        <div class="text-red-700 -mt-3 text-center rounded relative text-sm" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+    </form>
+</section>
+{% endblock %}

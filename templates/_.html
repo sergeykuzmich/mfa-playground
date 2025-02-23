@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" class="bg-gray-200">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <title>Authentication Playground</title>
+</head>
+<body>
+<main class="profile-page bg-gray-200">
+    <section class="relative block h-[300px]">
+        <div class="absolute top-0 w-full h-full bg-center bg-cover" style="
+            background-image: url('/static/background.jpg');
+          ">
+            <span class="w-full h-full absolute opacity-50 bg-black"></span>
+        </div>
+        <div class="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-[70px]"
+             style="transform: translateZ(0px)">
+            <svg class="absolute -bottom-[1px] overflow-hidden" xmlns="http://www.w3.org/2000/svg"
+                 preserveAspectRatio="none"
+                 viewBox="0 0 3840 100" x="0" y="0">
+                <polygon class="text-gray-200 fill-current" points="3840 0 3840 100 0 100 0 90"></polygon>
+            </svg>
+        </div>
+    </section>
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
