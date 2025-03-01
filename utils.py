@@ -1,15 +1,19 @@
 import base64
+import datetime
 import hashlib
-import smtplib
+import logging
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
 
+import aiosmtplib
 import pyotp
 import qrcode
 from fastapi import Request, HTTPException, Depends
 
 from models import User
+from templates import templates
 
 
 async def is_guest(request: Request):
@@ -71,14 +75,43 @@ async def generate_qr_code_base64(otp_key: str, email: str) -> str:
 
 
 async def send_email(email: str, subject: str, content: str):
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.mailgun.org")
+    smtp_port = int(os.getenv("SMTP_PORT", 587))
+    smtp_username = os.getenv("SMTP_USERNAME", None)
+    smtp_password = os.getenv("SMTP_PASSWORD", None)
+    send_from = os.getenv("SMTP_SEND_FROM", smtp_username)
+
+    if not all([send_from, smtp_server, smtp_port, smtp_username, smtp_password]):
+        logging.warning("SMTP credentials are not fully provided.")
+        return
+
     msg = MIMEMultipart()
-    msg["From"] = "your-mailgun-email@example.com"
+    msg["From"] = send_from
     msg["To"] = email
     msg["Subject"] = subject
 
-    msg.attach(MIMEText(content, "plain"))
+    msg.attach(MIMEText(content, "html"))
 
-    async with smtplib.SMTP("smtp.mailgun.org", 587) as server:
-        await server.starttls()
-        await server.login("your-mailgun-username", "your-mailgun-password")
-        await server.send_message(msg)
+    try:
+        await aiosmtplib.send(
+            msg,
+            hostname=smtp_server,
+            port=smtp_port,
+            use_tls=True,
+            username=smtp_username,
+            password=smtp_password,
+        )
+    except Exception as e:
+        logging.warning(f"Failed to send email: {e}")
+
+
+async def send_otp_email(email: str, code: str, request: Request):
+    context = {
+        "url": f"{request.url.scheme}://{request.url.hostname}{'' if request.url.port in [80, 443, None] else f':{request.url.port}'}",
+        "code": code,
+        "current_year": str(datetime.datetime.now().year),
+    }
+    content = templates.TemplateResponse(
+        request=request, name="email-otp.html", context=context
+    ).body.decode("utf-8")
+    await send_email(email, "Your One Time Password", content)

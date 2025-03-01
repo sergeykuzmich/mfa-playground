@@ -7,23 +7,23 @@ import pyotp
 from fastapi import FastAPI, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from tortoise.contrib.fastapi import register_tortoise
 
 from models import User
+from templates import templates
 from utils import (
     generate_qr_code_base64,
     get_auth_user,
     is_guest,
     is_totp_mfa_not_enabled,
     is_eotp_mfa_not_enabled,
+    send_otp_email,
 )
 
 logging.getLogger("uvicorn").propagate = False
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 register_tortoise(
@@ -80,7 +80,7 @@ async def signin_action(
         if not otp_code:
             if user.email_mfa_enabled or email_mfa:
                 user.code = str(random.randint(100000, 999999))
-                # await send_email(user.email, "Your MFA Code", f"Your code is: {user.code}")
+                await send_otp_email(user.email, user.code, request)
                 await user.save()
 
             return templates.TemplateResponse(
