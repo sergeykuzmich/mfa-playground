@@ -1,4 +1,4 @@
-![Cover](static/backgroun.jpg)
+![Cover](static/background.jpg)
 
 # MFA Playground
 
