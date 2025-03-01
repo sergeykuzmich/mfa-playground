@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import random
 from urllib.parse import urlencode
 
@@ -17,6 +18,8 @@ from utils import (
     is_totp_mfa_not_enabled,
     is_eotp_mfa_not_enabled,
 )
+
+logging.getLogger("uvicorn").propagate = False
 
 app = FastAPI()
 
