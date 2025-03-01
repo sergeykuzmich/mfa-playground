@@ -2,9 +2,8 @@
 
 # MFA Playground
 
-A playground for tutorial about Multi-Factor Authentication (MFA).  
-The project includes both Time-based One-Time Password (TOTP) and One-Time Password (OTP)
-MFA implementations.
+A playground for a tutorial on Multi-Factor Authentication (MFA).  
+The project includes implementations of both Time-based One-Time Password (TOTP) and One-Time Password (OTP) MFA methods.
 
 ## Features
 
