@@ -14,8 +14,8 @@ MFA implementations.
 
 ## Requirements
 
-- UV
-- Docker (optional, for containerized deployment)
+- [uv](https://docs.astral.sh/uv/)
+- [Docker](https://www.docker.com)
 
 ## Installation
 
