@@ -1,3 +1,5 @@
+![Cover](static/backgroun.jpg)
+
 # MFA Playground
 
 A playground for tutorial about Multi-Factor Authentication (MFA).  
