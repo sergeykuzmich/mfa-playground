@@ -34,7 +34,7 @@ jobs:
         uses: docker/metadata-action@v4
         id: meta
         with:
-          images: ghcr.io/sergeykuzmich/${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha,format=short,prefix=
 
