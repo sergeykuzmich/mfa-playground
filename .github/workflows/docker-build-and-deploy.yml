@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build-and-deploy:
-    name: B'n'P Image
+    name: BnP Image
     runs-on: ubuntu-latest
 
     steps:
