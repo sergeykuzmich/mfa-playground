@@ -1,4 +1,4 @@
-name: Build and Deploy Docker Image
+name: Prepare GitHub Registry Image
 
 on:
   push:
@@ -8,8 +8,12 @@ on:
     branches:
       - main
 
+permissions:
+  packages: write
+
 jobs:
   build-and-deploy:
+    name: B'n'P Image
     runs-on: ubuntu-latest
 
     steps:
@@ -34,5 +38,4 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/sergeykuzmich/mfa-playground:latest
-            ghcr.io/sergeykuzmich/mfa-playground:${{ github.sha }}
+            ghcr.io/sergeykuzmich/mfa-playground:${{ github.sha:7 }}
