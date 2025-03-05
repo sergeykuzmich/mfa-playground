@@ -92,6 +92,7 @@ async def signin_action(
                     "password": password,
                     "email_mfa": email_mfa,
                     "has_email_mfa": user.email_mfa_enabled,
+                    "has_authenticator_mfa": user.authenticator_mfa_enabled,
                 },
                 status_code=302,
             )
@@ -109,6 +110,7 @@ async def signin_action(
                         "error": "Invalid OTP code",
                         "email_mfa": email_mfa,
                         "has_email_mfa": user.email_mfa_enabled,
+                        "has_authenticator_mfa": user.authenticator_mfa_enabled,
                     },
                     status_code=422,
                 )
