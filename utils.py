@@ -3,6 +3,7 @@ import datetime
 import hashlib
 import logging
 import os
+import random
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from io import BytesIO
@@ -115,3 +116,50 @@ async def send_otp_email(email: str, code: str, request: Request):
         request=request, name="email-otp.html", context=context
     ).body.decode("utf-8")
     await send_email(email, "Your One Time Password", content)
+
+
+async def send_email_mfa_code(user: User, request: Request):
+    user.code = str(random.randint(100000, 999999))
+    await send_otp_email(user.email, user.code, request)
+    await user.save()
+
+
+def render_mfa_template(
+    request: Request,
+    *,
+    challenge: str,
+    use_email_mfa: bool,
+    user: User,
+    email: str,
+    error: str = None,
+):
+    context = {
+        "challenge": challenge,
+        "email": email,
+        "use_email_mfa": use_email_mfa,
+        "has_email_mfa": user.email_mfa_enabled,
+        "has_authenticator_mfa": user.authenticator_mfa_enabled,
+    }
+    if error:
+        context["error"] = error
+    return templates.TemplateResponse(
+        request=request,
+        name="mfa.html",
+        context=context,
+        status_code=422,
+    )
+
+
+async def verify_mfa(user: User, otp_code: str, use_email_mfa: bool) -> (bool, str):
+    if user.authenticator_mfa_enabled and not use_email_mfa:
+        totp = pyotp.TOTP(user.key)
+        if not totp.verify(otp_code):
+            return False, "Invalid OTP code"
+    elif user.email_mfa_enabled or use_email_mfa:
+        if otp_code != user.code:
+            return False, "Invalid OTP code"
+    return True, ""
+
+
+def normalize_email(email: str) -> str:
+    return email.strip().lower()
