@@ -61,7 +61,6 @@ async def signin_action(
     otp_code: str = Form(None),
     use_email_mfa: bool = Form(False),
 ):
-    print(email)
     normalized_email = normalize_email(email)
     user = await User.get_or_none(email=normalized_email, password=password)
     if not user:
@@ -116,7 +115,8 @@ async def signup_page(request: Request):
 async def signup_action(
     name: str = Form(...), email: str = Form(...), password: str = Form(...)
 ):
-    user = User(name=name, email=email, password=password)
+    normalized_email = normalize_email(email)
+    user = User(name=name, email=normalized_email, password=password)
     await user.save()
     session_cookie = hashlib.md5(email.encode("utf-8")).hexdigest()
     response = RedirectResponse("/", status_code=303)
