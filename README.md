@@ -56,7 +56,7 @@ The project includes implementations of both Time-based One-Time Password (TOTP)
 
 3. Run the application:
    ```sh
-   docker-compose up
+   docker compose up
    ```
 
 ## Deployment
