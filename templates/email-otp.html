@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Time Password</title>
+    <style>
+        .email {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            background-color: #f7f8f9;
+            color: #000;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .otp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #004e3f;
+        }
+    </style>
+</head>
+<body>
+<div class="email">
+    <div class="container">
+        <img style="width: 100%; height: auto;"
+             src="{{ url }}/static/background.jpg"
+             alt="Authentication Playground">
+        <h1>Authentication Playground</h1>
+        <p>Your One Time Password is:</p>
+        <p class="otp">{{ code }}</p>
+        <p style="font-size: 12px">
+            Do not share this code with anyone.<br>If you didn't request this code, you
+            can safely ignore this email.
+        </p>
+        <hr/>
+        <p>Thanks,<br><a href="{{ url }}">Authentication Playground</a> ©
+            {{ current_year }}</p>
+    </div>
+</div>
+</body>
+</html>
