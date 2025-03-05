@@ -197,9 +197,8 @@ async def totp_activate_action(
 
 @app.get("/mfa/eotp/activate", dependencies=[Depends(is_eotp_mfa_not_enabled)])
 async def eotp_activate_page(request: Request, user: User = Depends(get_auth_user)):
-    otp_key = pyotp.random_base32()
-    otp_code = pyotp.TOTP(otp_key).now()
-    user.code = otp_code
+    user.code = str(random.randint(100000, 999999))
+    await send_otp_email(user.email, user.code, request)
     await user.save()
     return templates.TemplateResponse(request=request, name="eotp.html")
 
