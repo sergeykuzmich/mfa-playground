@@ -17,7 +17,7 @@ from utils import (
     is_guest,
     is_totp_mfa_not_enabled,
     is_eotp_mfa_not_enabled,
-    send_otp_email,
+    send_otp_email, send_email_mfa_code, render_mfa_template, verify_mfa, normalize_email,
 )
 
 logging.getLogger("uvicorn").propagate = False
@@ -36,11 +36,10 @@ register_tortoise(
 
 
 @app.get("/")
-def home_page(request: Request, user: User = Depends(get_auth_user)):
-    email_encoded = user.email.lower().encode("utf-8")
-    email_hash = hashlib.sha256(email_encoded).hexdigest()
-    query_params = urlencode({"d": "identicon", "s": str(300)})
-    gravatar_query = f"{email_hash}?{query_params}"
+async def home_page(request: Request, user: User = Depends(get_auth_user)):
+    email_md5 = hashlib.md5(user.email.lower().encode("utf-8")).hexdigest()
+    query_params = urlencode({"d": "identicon", "s": "300"})
+    gravatar_query = f"{email_md5}?{query_params}"
 
     return templates.TemplateResponse(
         request=request,
@@ -60,9 +59,11 @@ async def signin_action(
     email: str = Form(...),
     password: str = Form(...),
     otp_code: str = Form(None),
-    email_mfa: bool = Form(False),
+    use_email_mfa: bool = Form(False),
 ):
-    user = await User.get_or_none(email=email, password=password)
+    print(email)
+    normalized_email = normalize_email(email)
+    user = await User.get_or_none(email=normalized_email, password=password)
     if not user:
         return templates.TemplateResponse(
             request=request,
@@ -72,66 +73,37 @@ async def signin_action(
         )
 
     if user.authenticator_mfa_enabled or user.email_mfa_enabled:
-        if user.authenticator_mfa_enabled and not email_mfa:
-            challenge = "Open Authenticator&nbsp;application to&nbsp;get the Code"
-        else:
-            challenge = "Check your email for&nbsp;the&nbsp;Code"
+        challenge = (
+            "Open your Authenticator application to get the Code"
+            if user.authenticator_mfa_enabled and not use_email_mfa
+            else "Check your email for the Code"
+        )
 
         if not otp_code:
-            if user.email_mfa_enabled or email_mfa:
-                user.code = str(random.randint(100000, 999999))
-                await send_otp_email(user.email, user.code, request)
-                await user.save()
-
-            return templates.TemplateResponse(
+            if user.email_mfa_enabled or use_email_mfa:
+                await send_email_mfa_code(user, request)
+            return render_mfa_template(
                 request=request,
-                name="mfa.html",
-                context={
-                    "challenge": challenge,
-                    "email": email,
-                    "password": password,
-                    "email_mfa": email_mfa,
-                    "has_email_mfa": user.email_mfa_enabled,
-                    "has_authenticator_mfa": user.authenticator_mfa_enabled,
-                },
-                status_code=302,
+                challenge=challenge,
+                use_email_mfa=use_email_mfa,
+                user=user,
+                email=email,
             )
 
-        if user.authenticator_mfa_enabled and not email_mfa:
-            totp = pyotp.TOTP(user.key)
-            if not totp.verify(otp_code):
-                return templates.TemplateResponse(
-                    request=request,
-                    name="mfa.html",
-                    context={
-                        "challenge": challenge,
-                        "email": email,
-                        "password": password,
-                        "error": "Invalid OTP code",
-                        "email_mfa": email_mfa,
-                        "has_email_mfa": user.email_mfa_enabled,
-                        "has_authenticator_mfa": user.authenticator_mfa_enabled,
-                    },
-                    status_code=422,
-                )
-        elif user.email_mfa_enabled:
-            if otp_code != user.code:
-                return templates.TemplateResponse(
-                    request=request,
-                    name="mfa.html",
-                    context={
-                        "challenge": challenge,
-                        "email": email,
-                        "password": password,
-                        "error": "Invalid OTP code",
-                        "email_mfa": email_mfa,
-                    },
-                    status_code=422,
-                )
+        valid, error_message = await verify_mfa(user, otp_code, use_email_mfa)
+        if not valid:
+            return render_mfa_template(
+                request=request,
+                challenge=challenge,
+                use_email_mfa=use_email_mfa,
+                user=user,
+                email=email,
+                error=error_message,
+            )
 
-    email_md5 = hashlib.md5(email.encode("utf-8")).hexdigest()
+    session_cookie = hashlib.md5(email.encode("utf-8")).hexdigest()
     response = RedirectResponse("/", status_code=303)
-    response.set_cookie(key="Session", value=email_md5)
+    response.set_cookie(key="Session", value=session_cookie)
     return response
 
 
@@ -146,10 +118,9 @@ async def signup_action(
 ):
     user = User(name=name, email=email, password=password)
     await user.save()
-
-    email_md5 = hashlib.md5(email.encode("utf-8")).hexdigest()
+    session_cookie = hashlib.md5(email.encode("utf-8")).hexdigest()
     response = RedirectResponse("/", status_code=303)
-    response.set_cookie(key="Session", value=email_md5)
+    response.set_cookie(key="Session", value=session_cookie)
     return response
 
 
@@ -186,6 +157,7 @@ async def totp_activate_action(
         user.authenticator_mfa_enabled = True
         await user.save()
         return RedirectResponse("/", status_code=303)
+    # Re-render the totp activation page with an error if verification fails.
     return templates.TemplateResponse(
         request=request,
         name="totp.html",
@@ -194,6 +166,7 @@ async def totp_activate_action(
             "data": await generate_qr_code_base64(otp_key, user.email),
             "otp_key": otp_key,
         },
+        status_code=422,
     )
 
 
@@ -214,7 +187,10 @@ async def eotp_activate_action(
         await user.save()
         return RedirectResponse("/", status_code=303)
     return templates.TemplateResponse(
-        request=request, name="eotp.html", context={"error": "Invalid OTP code"}
+        request=request,
+        name="eotp.html",
+        context={"error": "Invalid OTP code"},
+        status_code=422,
     )
 
 
