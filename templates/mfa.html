@@ -36,7 +36,7 @@
             </div>
             {% endif %}
         </form>
-        {% if has_email_mfa and not email_mfa %}
+        {% if has_email_mfa and not email_mfa and has_authenticator_mfa %}
         <form method="POST" class="mt-5 text-center">
             <input type="hidden" name="email" value="{{ email }}">
             <input type="hidden" name="password" value="{{ password }}">
