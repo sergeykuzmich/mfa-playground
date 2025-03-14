@@ -16,6 +16,12 @@ The project includes implementations of both Time-based One-Time Password (TOTP)
 - [uv](https://docs.astral.sh/uv/)
 - [Docker](https://www.docker.com)
 
+## Prerequisites
+
+- Python 3.13 or higher
+- Docker 20.10.7 or higher
+- Docker Compose 1.29.2 or higher
+
 ## Development
 
 ### Local
@@ -74,3 +80,14 @@ The project includes implementations of both Time-based One-Time Password (TOTP)
 ## Usage
 
 Access the application at [http://localhost:8000](http://localhost:8000).
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Docker: "Cannot connect to the Docker daemon"**
+   - Ensure Docker is running on your machine.
+   - Verify that your user has permission to access Docker.
+
+2. **uv: "Command not found"**
+   - Ensure `uv` is installed and available in your PATH.
