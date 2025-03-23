@@ -4,7 +4,7 @@ import random
 from urllib.parse import urlencode
 
 import pyotp
-from fastapi import FastAPI, Request, Depends, Form
+from fastapi import Depends, FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from tortoise.contrib.fastapi import register_tortoise
@@ -14,14 +14,14 @@ from templates import templates
 from utils import (
     generate_qr_code_base64,
     get_auth_user,
+    is_eotp_mfa_not_enabled,
     is_guest,
     is_totp_mfa_not_enabled,
-    is_eotp_mfa_not_enabled,
-    send_otp_email,
-    send_email_mfa_code,
-    render_mfa_template,
-    verify_mfa,
     normalize_email,
+    render_mfa_template,
+    send_email_mfa_code,
+    send_otp_email,
+    verify_mfa,
 )
 
 logging.getLogger("uvicorn").propagate = False
@@ -90,7 +90,6 @@ async def signin_action(
                 challenge=challenge,
                 use_email_mfa=use_email_mfa,
                 user=user,
-                email=email,
             )
 
         valid, error_message = await verify_mfa(user, otp_code, use_email_mfa)
@@ -100,7 +99,6 @@ async def signin_action(
                 challenge=challenge,
                 use_email_mfa=use_email_mfa,
                 user=user,
-                email=email,
                 error=error_message,
             )
 
