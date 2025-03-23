@@ -91,6 +91,8 @@ async def send_email(email: str, subject: str, content: str):
     msg["To"] = email
     msg["Subject"] = subject
 
+    msg["X-Mailgun-Require-TLS"] = "false"
+
     msg.attach(MIMEText(content, "html"))
 
     try:
