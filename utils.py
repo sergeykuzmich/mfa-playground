@@ -11,7 +11,7 @@ from io import BytesIO
 import aiosmtplib
 import pyotp
 import qrcode
-from fastapi import Request, HTTPException, Depends
+from fastapi import Depends, HTTPException, Request
 
 from models import User
 from templates import templates
@@ -130,12 +130,12 @@ def render_mfa_template(
     challenge: str,
     use_email_mfa: bool,
     user: User,
-    email: str,
     error: str = None,
 ):
     context = {
         "challenge": challenge,
-        "email": email,
+        "email": user.email,
+        "password": user.password,
         "use_email_mfa": use_email_mfa,
         "has_email_mfa": user.email_mfa_enabled,
         "has_authenticator_mfa": user.authenticator_mfa_enabled,

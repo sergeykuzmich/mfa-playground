@@ -17,7 +17,11 @@ from utils import (
     is_guest,
     is_totp_mfa_not_enabled,
     is_eotp_mfa_not_enabled,
-    send_otp_email, send_email_mfa_code, render_mfa_template, verify_mfa, normalize_email,
+    send_otp_email,
+    send_email_mfa_code,
+    render_mfa_template,
+    verify_mfa,
+    normalize_email,
 )
 
 logging.getLogger("uvicorn").propagate = False
