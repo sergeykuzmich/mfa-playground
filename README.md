@@ -1,3 +1,17 @@
+# 🧨🧨🧨 #
+
+## Important Notice ##
+This repository contains a dummy application demonstrating various Multi-Factor Authentication (MFA) methods. It has not been developed with robust security practices or industry best practices and is intended solely for educational and testing purposes. It stores passwords in plain text in the database!!!
+
+### Do Not Use It Anywhere, Especially in Production ###
+- This code is **not secure** and may contain vulnerabilities.
+- It is provided as-is, without warranties or guarantees of any kind.
+- Do not deploy this application in any production environment or use it for managing sensitive data.
+
+By using this repository, you acknowledge that you understand the limitations and risks involved. For any real-world implementation of MFA, please rely on well-vetted solutions and consult with security experts.
+
+# 🧨🧨🧨 #
+
 ![Cover](static/background.jpg)
 
 # MFA Playground
