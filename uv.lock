@@ -4,11 +4,11 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "aiosmtplib"
-version = "4.0.0"
+version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7c/b3/8ed1f568661c46c19a486ade7d21c2e704d72d868aca41627da19813b1ce/aiosmtplib-4.0.0.tar.gz", hash = "sha256:9629a0d8786ab1e5f790ebbbf5cbe7886fedf949a3f52fd7b27a0360f6233422", size = 60330, upload-time = "2025-02-03T01:28:56.878Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/15/c2dc93a58d716bce64b53918d3cf667d86c96a56a9f3a239a9f104643637/aiosmtplib-5.0.0.tar.gz", hash = "sha256:514ac11c31cb767c764077eb3c2eb2ae48df6f63f1e847aeb36119c4fc42b52d", size = 61057, upload-time = "2025-10-19T19:12:31.426Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/a3/90454e5882d95edd73b18424279a58f3a791aed20c303af4193aa63c36a9/aiosmtplib-4.0.0-py3-none-any.whl", hash = "sha256:33c72021cd9e9da495823952751e2dd927014a04a0eca711ee4af9812f2f04af", size = 26971, upload-time = "2025-02-03T01:28:54.541Z" },
+    { url = "https://files.pythonhosted.org/packages/99/42/b997c306dc54e6ac62a251787f6b5ec730797eea08e0336d8f0d7b899d5f/aiosmtplib-5.0.0-py3-none-any.whl", hash = "sha256:95eb0f81189780845363ab0627e7f130bca2d0060d46cd3eeb459f066eb7df32", size = 27048, upload-time = "2025-10-19T19:12:30.124Z" },
 ]
 
 [[package]]
